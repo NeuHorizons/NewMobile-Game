@@ -4,10 +4,11 @@ public class RainDroplet : MonoBehaviour
 {
     public float fallSpeed = 5f;  
     public float lifetime = 10f; 
+    public float damageAmount = 10f; 
 
     void Start()
     {
-       
+        
         Destroy(gameObject, lifetime);
     }
 
@@ -19,7 +20,20 @@ public class RainDroplet : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-       
+        
+        if (other.CompareTag("Player"))
+        {
+            
+            CharacterHealth playerHealth = other.GetComponent<CharacterHealth>();
+
+            if (playerHealth != null)
+            {
+               
+                playerHealth.TakeDamage(damageAmount);
+            }
+        }
+
+        
         Destroy(gameObject);
     }
 }
