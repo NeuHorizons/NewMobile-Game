@@ -6,10 +6,18 @@ public class CharacterHealth : MonoBehaviour
     public HealthData healthData; 
     public Light characterLight;
     public Slider healthSlider; 
+    public Renderer characterRenderer; // Reference to the object with emission
 
     [Header("Light Settings")]
     public float maxLightIntensity = 2f; 
     public float minLightIntensity = 0f; 
+
+    [Header("Emission Settings")]
+    public float maxEmissionIntensity = 2f; 
+    public float minEmissionIntensity = 0f; 
+
+    private Material characterMaterial;
+    private Color baseEmissionColor;
 
     private void Start()
     {
@@ -24,7 +32,14 @@ public class CharacterHealth : MonoBehaviour
             healthSlider.value = healthData.currentHealth;
         }
 
-        UpdateLightIntensity();
+        if (characterRenderer != null)
+        {
+            characterMaterial = characterRenderer.material;
+            baseEmissionColor = characterMaterial.GetColor("_EmissionColor");
+            characterMaterial.EnableKeyword("_EMISSION");
+        }
+
+        UpdateLightAndEmission();
     }
 
     public void TakeDamage(float damage)
@@ -38,7 +53,7 @@ public class CharacterHealth : MonoBehaviour
                 healthSlider.value = healthData.currentHealth;
             }
 
-            UpdateLightIntensity();
+            UpdateLightAndEmission();
 
             if (!healthData.IsAlive())
             {
@@ -47,18 +62,28 @@ public class CharacterHealth : MonoBehaviour
         }
     }
 
-    private void UpdateLightIntensity()
+    private void UpdateLightAndEmission()
     {
+        float normalizedHealth = healthData.GetNormalizedHealth();
+
+        // Adjust Light Intensity
         if (characterLight != null)
         {
-            float normalizedHealth = healthData.GetNormalizedHealth();
             characterLight.intensity = Mathf.Lerp(minLightIntensity, maxLightIntensity, normalizedHealth);
+        }
+
+        // Adjust Emission Intensity
+        if (characterMaterial != null)
+        {
+            float emissionIntensity = Mathf.Lerp(minEmissionIntensity, maxEmissionIntensity, normalizedHealth);
+            Color emissionColor = baseEmissionColor * emissionIntensity;
+            characterMaterial.SetColor("_EmissionColor", emissionColor);
+            DynamicGI.SetEmissive(characterRenderer, emissionColor); // Update global illumination
         }
     }
 
     private void Die()
     {
         Debug.Log($"{gameObject.name} has died.");
-       
     }
 }
