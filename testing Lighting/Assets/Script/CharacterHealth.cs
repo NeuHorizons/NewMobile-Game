@@ -1,20 +1,23 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CharacterHealth : MonoBehaviour
 {
-    public HealthData healthData; 
+    public static event Action OnPlayerDeath;
+
+    public HealthData healthData;
     public Light characterLight;
-    public Slider healthSlider; 
-    public Renderer characterRenderer; // Reference to the object with emission
+    public Slider healthSlider;
+    public Renderer characterRenderer;
 
     [Header("Light Settings")]
-    public float maxLightIntensity = 2f; 
-    public float minLightIntensity = 0f; 
+    public float maxLightIntensity = 2f;
+    public float minLightIntensity = 0f;
 
     [Header("Emission Settings")]
-    public float maxEmissionIntensity = 2f; 
-    public float minEmissionIntensity = 0f; 
+    public float maxEmissionIntensity = 2f;
+    public float minEmissionIntensity = 0f;
 
     private Material characterMaterial;
     private Color baseEmissionColor;
@@ -66,24 +69,23 @@ public class CharacterHealth : MonoBehaviour
     {
         float normalizedHealth = healthData.GetNormalizedHealth();
 
-        // Adjust Light Intensity
         if (characterLight != null)
         {
             characterLight.intensity = Mathf.Lerp(minLightIntensity, maxLightIntensity, normalizedHealth);
         }
 
-        // Adjust Emission Intensity
         if (characterMaterial != null)
         {
             float emissionIntensity = Mathf.Lerp(minEmissionIntensity, maxEmissionIntensity, normalizedHealth);
             Color emissionColor = baseEmissionColor * emissionIntensity;
             characterMaterial.SetColor("_EmissionColor", emissionColor);
-            DynamicGI.SetEmissive(characterRenderer, emissionColor); // Update global illumination
+            DynamicGI.SetEmissive(characterRenderer, emissionColor);
         }
     }
 
     private void Die()
     {
         Debug.Log($"{gameObject.name} has died.");
+        OnPlayerDeath?.Invoke();
     }
 }
