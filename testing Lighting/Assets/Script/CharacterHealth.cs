@@ -50,6 +50,7 @@ public class CharacterHealth : MonoBehaviour
         if (healthData != null)
         {
             healthData.ModifyHealth(-damage);
+            healthData.currentHealth = Mathf.Max(healthData.currentHealth, 0);
 
             if (healthSlider != null)
             {
@@ -62,6 +63,24 @@ public class CharacterHealth : MonoBehaviour
             {
                 Die();
             }
+        }
+    }
+
+    public void Heal(float healAmount)
+    {
+        if (healthData != null)
+        {
+            float previousHealth = healthData.currentHealth;
+            healthData.currentHealth = Mathf.Clamp(healthData.currentHealth + healAmount, 0, healthData.maxHealth);
+
+            if (healthSlider != null)
+            {
+                healthSlider.value = healthData.currentHealth;
+            }
+
+            
+
+            UpdateLightAndEmission();
         }
     }
 

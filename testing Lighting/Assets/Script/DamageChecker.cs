@@ -7,7 +7,11 @@ public class DamageChecker : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("lol");
-        characterHealth.TakeDamage(damageAmount);
+        // Only trigger damage if the collider belongs to the player
+        if(other.CompareTag("Player"))
+        {
+            Debug.Log("Player collision detected - applying damage.");
+            characterHealth.TakeDamage(damageAmount);
+        }
     }
 }

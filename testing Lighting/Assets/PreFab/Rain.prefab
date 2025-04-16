@@ -147,5 +147,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fallSpeed: 2
-  lifetime: 2
+  lifetime: 8
   damageAmount: 10

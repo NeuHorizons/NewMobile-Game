@@ -2,15 +2,16 @@ using UnityEngine;
 
 public class FollowScript : MonoBehaviour
 {
+    // Set this offset in the Inspector (or leave the default)
+    public Vector3 offset = new Vector3(0, 5, -10);
     public Transform target; 
-    private Vector3 offset;  
 
     void Start()
     {
-        
         if (target != null)
         {
-            offset = transform.position - target.position;
+            // Immediately snap the camera to the target's position plus the offset.
+            transform.position = target.position + offset;
         }
     }
 
@@ -18,11 +19,9 @@ public class FollowScript : MonoBehaviour
     {
         if (target != null)
         {
-            
+            // Continuously update the camera's position to follow the target.
             transform.position = target.position + offset;
-
-           
-            transform.rotation = Quaternion.identity; 
+            transform.rotation = Quaternion.identity;
         }
     }
 }
